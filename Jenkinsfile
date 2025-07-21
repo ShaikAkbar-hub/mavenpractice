@@ -1,23 +1,58 @@
+@Library('mylibrary')_
 pipeline
 {
     agent any
     stages
     {
-        stage("Download")
+        stage('Download')
         {
             steps
             {
-                git 'https://github.com/ShaikAkbar-hub/Maven1.git'
-                //echo 'This is fake URL must be modify later'
+                script
+                {
+                     cicd.gitDownload('mavenpractice')
+                }
             }
         }
-        stage("build")
+        stage('build')
         {
             steps
             {
-                sh '''mvn package
-'''
-                //echo 'This is fake command and must be modify later'
+                script
+                {
+                    cicd.buildArtefact()
+                }
+            }
+        }
+        stage('Deployment')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.deployTomcat("Declarativepipeline5","172.31.94.12","mytest")
+                }
+            }
+        }
+        stage('Testing')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.gitDownload('FunctionalTesting')
+                    cicd.seleniumtesting('Declarativepipeline5')
+                }
+            }
+        }
+        stage('Delivery')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.deployTomcat("Declarativepipeline5","172.31.90.210","prodserver")
+                }
             }
         }
     }
